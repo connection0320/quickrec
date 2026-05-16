@@ -1,0 +1,295 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f0f0f;
+  color: #e4e4e7;
+  min-height: 100vh;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────── */
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #6366f1;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  font-size: 13px;
+  color: #71717a;
+  margin-top: 4px;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px;
+  background: none;
+  border: none;
+  color: #71717a;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tab-btn:hover { color: #e4e4e7; background: #222; }
+
+.tab-btn.active {
+  color: #6366f1;
+  border-bottom: 2px solid #6366f1;
+}
+
+/* ── Tab Content ─────────────────────────────────────────────────────── */
+
+.tab-content {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Form fields ─────────────────────────────────────────────────────── */
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.field-row label {
+  width: 140px;
+  font-size: 13px;
+  color: #a1a1aa;
+  flex-shrink: 0;
+}
+
+.field-row input:not([type="range"]) {
+  flex: 1;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e4e4e7;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field-row input:not([type="range"]):focus { border-color: #6366f1; }
+
+.slider-row { align-items: center; }
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+/* ── Dropzone ────────────────────────────────────────────────────────── */
+
+.dropzone {
+  border: 2px dashed #2a2a2a;
+  border-radius: 8px;
+  padding: 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropzone:hover, .dropzone.dragging { border-color: #6366f1; background: #1e1e2e; }
+.dropzone.has-file { border-color: #22c55e; background: #0f1a14; }
+
+.drop-icon { font-size: 28px; }
+.drop-label { font-size: 13px; color: #71717a; }
+
+/* ── Query Input ─────────────────────────────────────────────────────── */
+
+.query-input {
+  width: 100%;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 14px;
+  color: #e4e4e7;
+  font-family: inherit;
+  font-size: 15px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  line-height: 1.5;
+}
+
+.query-input:focus { border-color: #6366f1; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  padding: 10px 24px;
+  background: #6366f1;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.btn-primary:hover { background: #4f51d3; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  padding: 7px 14px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  color: #e4e4e7;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s;
+}
+
+.btn-secondary:hover { background: #333; }
+.btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-danger {
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid #7f1d1d;
+  border-radius: 6px;
+  color: #f87171;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-danger:hover { background: #7f1d1d33; }
+
+/* ── Messages ────────────────────────────────────────────────────────── */
+
+.error-msg {
+  padding: 10px 14px;
+  background: #1f0a0a;
+  border: 1px solid #7f1d1d;
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 13px;
+}
+
+.success-msg {
+  padding: 10px 14px;
+  background: #0a1f0e;
+  border: 1px solid #166534;
+  border-radius: 6px;
+  color: #86efac;
+  font-size: 13px;
+}
+
+.empty-msg { color: #52525b; font-size: 14px; text-align: center; padding: 24px 0; }
+
+/* ── Recommend Results ───────────────────────────────────────────────── */
+
+.rec-list { display: flex; flex-direction: column; gap: 10px; }
+
+.rec-card {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rec-label { font-weight: 600; font-size: 14px; color: #e4e4e7; }
+.rec-score { font-size: 16px; font-weight: 700; }
+.rec-text { font-size: 13px; color: #71717a; line-height: 1.5; }
+
+/* ── Collections ─────────────────────────────────────────────────────── */
+
+.col-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.col-header h3 { font-size: 15px; font-weight: 600; }
+
+.col-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.col-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.col-name { font-size: 14px; }
+
+/* ── Spinner ─────────────────────────────────────────────────────────── */
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
