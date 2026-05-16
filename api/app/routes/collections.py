@@ -6,8 +6,17 @@ router = APIRouter()
 
 @router.get("/collections")
 def list_collections():
-    names = [c.name for c in get_qdrant_client().get_collections().collections]
-    return {"collections": names}
+    client = get_qdrant_client()
+    result = []
+    for c in client.get_collections().collections:
+        info = client.get_collection(c.name)
+        vectors_config = info.config.params.vectors
+        result.append({
+            "name": c.name,
+            "vectors_count": info.vectors_count or 0,
+            "dimension": vectors_config.size if hasattr(vectors_config, "size") else 0,
+        })
+    return {"collections": result}
 
 
 @router.delete("/collections/{name}")

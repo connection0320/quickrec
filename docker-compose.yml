@@ -25,3 +25,4 @@ services:
         condition: service_healthy
     volumes:
       - ./data/models:/root/.cache/huggingface
+      - ./examples:/app/examples:ro

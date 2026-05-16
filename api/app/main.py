@@ -25,6 +25,7 @@ app.include_router(recommend.router)
 app.include_router(collections.router)
 
 app.mount("/assets", StaticFiles(directory=f"{STATIC_DIR}/assets"), name="assets")
+app.mount("/examples", StaticFiles(directory="examples"), name="examples")
 
 
 @app.get("/", include_in_schema=False)

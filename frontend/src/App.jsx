@@ -3,6 +3,11 @@ import './App.css'
 
 const API = 'http://localhost:8000'
 
+const SAMPLE_FILES = [
+  { name: 'helpdesk_categories.csv', label: '헬프데스크 카테고리', desc: 'question / category' },
+  { name: 'product_tags.csv',        label: '상품 태그',           desc: 'input / label' },
+]
+
 function Spinner() {
   return <div className="spinner" />
 }
@@ -11,11 +16,25 @@ function ErrorMsg({ msg }) {
   return msg ? <div className="error-msg">⚠ {msg}</div> : null
 }
 
+// CSV 첫 줄에서 컬럼명 파싱
+function parseCsvColumns(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const firstLine = e.target.result.split('\n')[0] || ''
+      const cols = firstLine.split(',').map(c => c.trim().replace(/^"|"$/g, '')).filter(Boolean)
+      resolve(cols)
+    }
+    reader.readAsText(file)
+  })
+}
+
 // ── Upload Tab ──────────────────────────────────────────────────────────────
 
 function UploadTab() {
   const [file, setFile] = useState(null)
   const [dragging, setDragging] = useState(false)
+  const [columns, setColumns] = useState([])
   const [collectionName, setCollectionName] = useState('default')
   const [inputColumn, setInputColumn] = useState('question')
   const [labelColumn, setLabelColumn] = useState('category')
@@ -23,12 +42,21 @@ function UploadTab() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
 
+  const applyFile = useCallback(async (f) => {
+    setFile(f)
+    setResult(null)
+    const cols = await parseCsvColumns(f)
+    setColumns(cols)
+    if (cols.length > 0) setInputColumn(cols[0])
+    if (cols.length > 1) setLabelColumn(cols[1])
+  }, [])
+
   const handleDrop = useCallback((e) => {
     e.preventDefault()
     setDragging(false)
     const dropped = e.dataTransfer.files[0]
-    if (dropped) setFile(dropped)
-  }, [])
+    if (dropped) applyFile(dropped)
+  }, [applyFile])
 
   const handleSubmit = async () => {
     if (!file) { setError('CSV 파일을 선택해주세요.'); return }
@@ -49,6 +77,25 @@ function UploadTab() {
 
   return (
     <div className="tab-content">
+      {/* 샘플 CSV 다운로드 */}
+      <div className="sample-section">
+        <span className="sample-label">샘플 CSV</span>
+        <div className="sample-btns">
+          {SAMPLE_FILES.map(f => (
+            <a
+              key={f.name}
+              href={`${API}/examples/${f.name}`}
+              download={f.name}
+              className="btn-sample"
+              title={f.desc}
+            >
+              ↓ {f.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* 드롭존 */}
       <div
         className={`dropzone ${dragging ? 'dragging' : ''} ${file ? 'has-file' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
@@ -59,7 +106,7 @@ function UploadTab() {
         <input
           id="file-input" type="file" accept=".csv"
           style={{ display: 'none' }}
-          onChange={(e) => setFile(e.target.files[0])}
+          onChange={(e) => e.target.files[0] && applyFile(e.target.files[0])}
         />
         {file
           ? <><span className="drop-icon">📄</span><span className="drop-label">{file.name}</span></>
@@ -71,13 +118,29 @@ function UploadTab() {
         <label>Collection Name</label>
         <input value={collectionName} onChange={e => setCollectionName(e.target.value)} />
       </div>
+
       <div className="field-row">
         <label>Input Column</label>
-        <input value={inputColumn} onChange={e => setInputColumn(e.target.value)} />
+        {columns.length > 0
+          ? (
+            <select value={inputColumn} onChange={e => setInputColumn(e.target.value)}>
+              {columns.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          )
+          : <input value={inputColumn} onChange={e => setInputColumn(e.target.value)} />
+        }
       </div>
+
       <div className="field-row">
         <label>Label Column</label>
-        <input value={labelColumn} onChange={e => setLabelColumn(e.target.value)} />
+        {columns.length > 0
+          ? (
+            <select value={labelColumn} onChange={e => setLabelColumn(e.target.value)}>
+              {columns.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          )
+          : <input value={labelColumn} onChange={e => setLabelColumn(e.target.value)} />
+        }
       </div>
 
       <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
@@ -126,13 +189,12 @@ function RecommendTab() {
     <div className="tab-content">
       <textarea
         className="query-input"
-        placeholder="추천받을 텍스트를 입력하세요..."
+        placeholder="추천받을 텍스트를 입력하세요... (Ctrl+Enter로 검색)"
         value={text}
         onChange={e => setText(e.target.value)}
         onKeyDown={e => e.key === 'Enter' && e.ctrlKey && handleSearch()}
         rows={3}
       />
-
       <div className="field-row">
         <label>Collection Name</label>
         <input value={collectionName} onChange={e => setCollectionName(e.target.value)} />
@@ -141,13 +203,10 @@ function RecommendTab() {
         <label>Top K — <strong>{topK}</strong></label>
         <input type="range" min={1} max={10} value={topK} onChange={e => setTopK(Number(e.target.value))} />
       </div>
-
       <button className="btn-primary" onClick={handleSearch} disabled={loading}>
         {loading ? <Spinner /> : '추천 검색'}
       </button>
-
       <ErrorMsg msg={error} />
-
       {results.length > 0 && (
         <div className="rec-list">
           {results.map((item, i) => {
@@ -199,7 +258,7 @@ function CollectionsTab() {
     try {
       const res = await fetch(`${API}/collections/${name}`, { method: 'DELETE' })
       if (!res.ok) { const d = await res.json(); throw new Error(d.detail) }
-      setCollections(prev => prev.filter(c => c !== name))
+      setCollections(prev => prev.filter(c => c.name !== name))
     } catch (e) { setError(e.message) }
   }
 
@@ -216,10 +275,13 @@ function CollectionsTab() {
         <p className="empty-msg">등록된 컬렉션이 없습니다.</p>
       )}
       <ul className="col-list">
-        {collections.map(name => (
-          <li key={name} className="col-item">
-            <span className="col-name">🗂 {name}</span>
-            <button className="btn-danger" onClick={() => handleDelete(name)}>삭제</button>
+        {collections.map(col => (
+          <li key={col.name} className="col-item">
+            <div className="col-info">
+              <span className="col-name">🗂 {col.name}</span>
+              <span className="col-meta">{col.vectors_count.toLocaleString()}개 벡터 · {col.dimension}차원</span>
+            </div>
+            <button className="btn-danger" onClick={() => handleDelete(col.name)}>삭제</button>
           </li>
         ))}
       </ul>
@@ -240,7 +302,6 @@ export default function App() {
         <div className="logo">quickrec</div>
         <p className="tagline">CSV 한 개로 5분 만에 동작하는 온프레미스 추천 API</p>
       </header>
-
       <main className="main">
         <div className="card">
           <div className="tabs">
