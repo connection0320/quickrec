@@ -1,1 +1,6 @@
-# FastAPI 앱 진입점 — 라우터 등록 및 앱 초기화
+from fastapi import FastAPI
+from app.routes import health
+
+app = FastAPI(title="quickrec")
+
+app.include_router(health.router)
