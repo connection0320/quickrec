@@ -10,7 +10,6 @@ BATCH_SIZE = 32
 def index_dataframe(
     df: pd.DataFrame,
     collection_name: str,
-    input_column: str,
     label_column: str,
 ) -> int:
     embedder = get_embedder()
@@ -19,7 +18,7 @@ def index_dataframe(
     if not collection_exists(collection_name):
         create_collection(collection_name, embedder.dimension)
 
-    texts = df[input_column].tolist()
+    texts = df["_input"].tolist()
     labels = df[label_column].tolist()
     total = 0
 
