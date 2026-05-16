@@ -39,3 +39,6 @@ htmlcov/
 # Project specific
 data/
 .env
+
+# Claude Code
+.claude/

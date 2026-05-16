@@ -29,7 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **인덱싱 흐름:**
 `POST /upload` (CSV + 폼 필드) → FastAPI가 임베딩 생성 → Qdrant 적재
 
-**추천 흐름:**
+**추천 흐름:**W
 `POST /recommend` (쿼리 텍스트) → FastAPI가 임베딩 → Qdrant top-K 검색 → 결과 JSON 반환
 
 **API 엔드포인트:**
