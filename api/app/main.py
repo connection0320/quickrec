@@ -1,7 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.routes import health, upload
+from app.routes import health, upload, recommend
 from app.services.embedder import get_embedder
 
 logging.basicConfig(level=logging.INFO)
@@ -17,3 +17,4 @@ app = FastAPI(title="quickrec", lifespan=lifespan)
 
 app.include_router(health.router)
 app.include_router(upload.router)
+app.include_router(recommend.router)

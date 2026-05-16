@@ -5,3 +5,9 @@ class UploadRequest(BaseModel):
     collection_name: str = "default"
     input_column: str
     label_column: str
+
+
+class RecommendRequest(BaseModel):
+    text: str
+    collection_name: str = "default"
+    top_k: int = 3
