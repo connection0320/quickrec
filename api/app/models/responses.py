@@ -1,1 +1,6 @@
-# API 응답 Pydantic 모델 정의
+from pydantic import BaseModel
+
+
+class UploadResponse(BaseModel):
+    collection: str
+    indexed_count: int

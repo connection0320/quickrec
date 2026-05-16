@@ -1,1 +1,7 @@
-# API 요청 Pydantic 모델 정의
+from pydantic import BaseModel
+
+
+class UploadRequest(BaseModel):
+    collection_name: str = "default"
+    input_column: str
+    label_column: str
